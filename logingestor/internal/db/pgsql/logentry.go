@@ -54,6 +54,13 @@ func (provider *Provider) SearchLogEntries(ctx context.Context, params *model.Se
 		args = append(args, params.ParentResourceID)
 	}
 
+	if len(params.Message) > 0 {
+		words := strings.Split(params.Message, " ")
+		d := strings.Join(words, " & ")
+
+		filters = append(filters, fmt.Sprintf("ts @@ to_tsquery('english', '%s')", d))
+	}
+
 	where := ""
 	if len(filters) > 0 {
 		where = "WHERE " + strings.Join(filters, " AND ")

@@ -1,0 +1,9 @@
+DROP INDEX IF EXISTS ts_idx;
+ALTER TABLE logs DROP COLUMN IF EXISTS ts;
+
+DROP INDEX IF EXISTS level_idx;
+DROP INDEX IF EXISTS resourceid_idx;
+DROP INDEX IF EXISTS traceid_idx;
+DROP INDEX IF EXISTS spanid_idx;
+DROP INDEX IF EXISTS commit_idx;
+DROP INDEX IF EXISTS parentresourceid_idx;

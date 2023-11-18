@@ -1,38 +1,4 @@
-# Created by https://www.toptal.com/developers/gitignore/api/macos,windows,nextjs,go,python
-# Edit at https://www.toptal.com/developers/gitignore?templates=macos,windows,nextjs,go,python
-
-### Go ###
-# If you prefer the allow list template instead of the deny list, see community template:
-# https://github.com/github/gitignore/blob/main/community/Golang/Go.AllowList.gitignore
-#
-# Binaries for programs and plugins
-*.exe
-*.exe~
-*.dll
-*.so
-*.dylib
-
-# Test binary, built with `go test -c`
-*.test
-
-# Output of the go coverage tool, specifically when used with LiteIDE
-*.out
-
-# Dependency directories (remove the comment below to include it)
-# vendor/
-
-# Go workspace file
-go.work
-
-### macOS ###
-# General
-.DS_Store
-.AppleDouble
-.LSOverride
-
-# Icon must end with two \r
-Icon
-
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # Thumbnails
 ._*
@@ -59,9 +25,10 @@ Temporary Items
 
 ### NextJS ###
 # dependencies
-/node_modules
+/queryui/node_modules
 /.pnp
 .pnp.js
+.yarn/install-state.gz
 
 # testing
 /coverage
@@ -74,6 +41,7 @@ Temporary Items
 /build
 
 # misc
+.DS_Store
 *.pem
 
 # debug
@@ -108,7 +76,6 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
 lib64/
 parts/
 sdist/
@@ -292,3 +259,6 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/macos,windows,nextjs,go,python
 
 .DS_STORE
+
+queryui/node_modules
+queryui/.next

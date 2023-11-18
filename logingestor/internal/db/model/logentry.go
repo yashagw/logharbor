@@ -14,3 +14,13 @@ type LogEntry struct {
 		ParentResourceID string `json:"parentResourceId"`
 	} `json:"metadata"`
 }
+
+type SearchLogEntriesParams struct {
+	Level            string   `json:"level"`
+	ResourceID       string   `json:"resourceId"`
+	TraceID          string   `json:"traceId"`
+	Commit           string   `json:"commit"`
+	SpanID           string   `json:"spanId"`
+	ParentResourceID string   `json:"parentResourceId"`
+	Message          []string `json:"message"`
+}

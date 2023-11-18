@@ -35,3 +35,20 @@ func (server *Server) InsertLogEntry(context *gin.Context) {
 
 	context.JSON(http.StatusOK, gin.H{"message": "log entry added"})
 }
+
+func (server *Server) SearchLogEntries(context *gin.Context) {
+	var searchLogEntriesParams model.SearchLogEntriesParams
+	err := context.BindJSON(&searchLogEntriesParams)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	logEntries, err := server.provider.SearchLogEntries(context, &searchLogEntriesParams)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"logEntries": logEntries})
+}

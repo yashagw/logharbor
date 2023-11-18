@@ -14,7 +14,3 @@ type LogEntry struct {
 		ParentResourceID string `json:"parentResourceId"`
 	} `json:"metadata"`
 }
-
-type CreateLogEntryRequest struct {
-	LogEntry *LogEntry `json:"logEntry"`
-}

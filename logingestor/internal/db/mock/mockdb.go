@@ -65,7 +65,7 @@ func (mr *MockProviderMockRecorder) DB() *gomock.Call {
 }
 
 // InsertLogEntry mocks base method.
-func (m *MockProvider) InsertLogEntry(arg0 context.Context, arg1 model.CreateLogEntryRequest) error {
+func (m *MockProvider) InsertLogEntry(arg0 context.Context, arg1 *model.LogEntry) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "InsertLogEntry", arg0, arg1)
 	ret0, _ := ret[0].(error)

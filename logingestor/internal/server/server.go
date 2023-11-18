@@ -4,20 +4,17 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/segmentio/kafka-go"
 	"github.com/yashagw/logingestor/internal/config"
-	"github.com/yashagw/logingestor/internal/db"
 )
 
 type Server struct {
 	config      config.Config
-	provider    db.Provider
 	router      *gin.Engine
 	kafkaWriter *kafka.Writer
 }
 
-func NewServer(provider db.Provider, config config.Config, kafkaWriter *kafka.Writer) (*Server, error) {
+func NewServer(config config.Config, kafkaWriter *kafka.Writer) (*Server, error) {
 	server := &Server{
 		config:      config,
-		provider:    provider,
 		kafkaWriter: kafkaWriter,
 	}
 	server.setupRouter()

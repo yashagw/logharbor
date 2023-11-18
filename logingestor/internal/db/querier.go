@@ -7,5 +7,5 @@ import (
 )
 
 type DBQuerier interface {
-	InsertLogEntry(context context.Context, arg model.CreateLogEntryRequest) error
+	InsertLogEntry(context context.Context, arg *model.LogEntry) error
 }

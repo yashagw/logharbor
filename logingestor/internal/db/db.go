@@ -3,7 +3,7 @@ package db
 import (
 	"database/sql"
 
-	"github.com/yashagw/logingestor/db/pgsql"
+	"github.com/yashagw/logingestor/internal/db/pgsql"
 )
 
 type Provider interface {

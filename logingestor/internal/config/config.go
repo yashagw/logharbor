@@ -1,4 +1,4 @@
-package util
+package config
 
 import (
 	"github.com/spf13/viper"
@@ -9,6 +9,7 @@ type Config struct {
 	DBSource          string `mapstructure:"DB_SOURCE"`
 	HttpServerAddress string `mapstructure:"HTTP_SERVER_ADDRESS"`
 	MIGRATION_URL     string `mapstructure:"MIGRATION_URL"`
+	KAFKA_LOGS_TOPIC  string `mapstructure:"KAFKA_LOGS_TOPIC"`
 }
 
 func LoadConfig(path string) (config Config, err error) {

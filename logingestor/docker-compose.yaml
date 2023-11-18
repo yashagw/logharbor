@@ -10,24 +10,77 @@ services:
       - "5443:5432"
     volumes:
       - data-volume:/var/lib/postgresql/data
+  zookeeper:
+    image: 'docker.io/bitnami/zookeeper'
+    user: root
+    ports:
+      - '2181:2181'
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+  kafka:
+    image: 'docker.io/bitnami/kafka'
+    user: root
+    depends_on:
+      - zookeeper
+    healthcheck:
+      test: >
+        sh -c "
+          apt update; apt -y install netcat;
+          nc -z localhost 9092 || exit -1
+        "
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - '9092:9092'
+    environment:
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
   api:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.api
     ports:
       - "3000:3000"
     environment:
       - GIN_MODE=release
       - DB_SOURCE=postgresql://root:secret@postgres:5432/logingestor_db?sslmode=disable
+      - KAFKA_URL=kafka:9092
     depends_on:
       - postgres
+      - kafka
     entrypoint:
       [
         "/app/wait-for.sh",
         "postgres:5432",
+        "kafka:9092",
         "--",
         "/app/start.sh"
       ]
-    command: [ "/app/main" ]
+    command: [ "/app/api" ]
+  dbinsertor:
+    build:
+      context: .
+      dockerfile: Dockerfile.dbinsertor
+    environment:
+      - DB_SOURCE=postgresql://root:secret@postgres:5432/logingestor_db?sslmode=disable
+      - KAFKA_URL=kafka:9092
+    depends_on:
+      - postgres
+      - kafka
+      - api
+    entrypoint:
+      [
+        "/app/wait-for.sh",
+        "postgres:5432",
+        "kafka:9092",
+        "api:3000",
+        "--",
+        "/app/start.sh"
+      ]
+    command: [ "/app/dbinsertor" ]
+  
 volumes:
   data-volume:

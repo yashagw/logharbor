@@ -3,10 +3,12 @@ package main
 import (
 	"database/sql"
 	"log"
+	"os"
 
-	"github.com/yashagw/logingestor/api"
-	"github.com/yashagw/logingestor/db"
-	"github.com/yashagw/logingestor/util"
+	"github.com/segmentio/kafka-go"
+	"github.com/yashagw/logingestor/internal/config"
+	"github.com/yashagw/logingestor/internal/db"
+	"github.com/yashagw/logingestor/internal/server"
 
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
@@ -15,7 +17,7 @@ import (
 )
 
 func main() {
-	config, err := util.LoadConfig(".")
+	config, err := config.LoadConfig(".")
 	if err != nil {
 		log.Fatal("cannot load config:", err)
 	}
@@ -33,7 +35,14 @@ func main() {
 		log.Fatal("cannot create db provider:", err)
 	}
 
-	server, err := api.NewServer(provider, config)
+	kafkaURL := os.Getenv("KAFKA_URL")
+	kafkaWriter := &kafka.Writer{
+		Addr:                   kafka.TCP(kafkaURL),
+		Topic:                  config.KAFKA_LOGS_TOPIC,
+		AllowAutoTopicCreation: true,
+	}
+
+	server, err := server.NewServer(provider, config, kafkaWriter)
 	if err != nil {
 		log.Fatal("cannot create server:", err)
 	}

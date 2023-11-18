@@ -2,17 +2,17 @@
 FROM golang:1.21-alpine3.18 AS builder
 WORKDIR /app
 COPY . .
-RUN go build -o main main.go
+RUN go build -o api cmd/api/main.go
 
 # Run stage
 FROM alpine:3.18
 WORKDIR /app
-COPY --from=builder /app/main .
+COPY --from=builder /app/api .
 COPY app.env .
 COPY start.sh .
 COPY wait-for.sh .
-COPY db/migration ./db/migration
+COPY internal/db/migration ./internal/db/migration
 
 EXPOSE 3000 3000
-CMD [ "/app/main" ]
+CMD [ "/app/api" ]
 ENTRYPOINT [ "/app/start.sh" ]

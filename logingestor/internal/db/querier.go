@@ -3,7 +3,7 @@ package db
 import (
 	"context"
 
-	"github.com/yashagw/logingestor/db/model"
+	"github.com/yashagw/logingestor/internal/db/model"
 )
 
 type DBQuerier interface {

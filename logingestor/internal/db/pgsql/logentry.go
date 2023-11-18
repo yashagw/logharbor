@@ -9,6 +9,8 @@ import (
 )
 
 func (provider *Provider) InsertLogEntry(ctx context.Context, logentry *model.LogEntry) error {
+	logentry.Level = strings.ToLower(logentry.Level)
+
 	var id int
 	err := provider.conn.QueryRowContext(ctx, `
 		INSERT INTO logs (level, message, resourceId, timestamp, traceId, spanId, commit, parentResourceId)
@@ -24,9 +26,15 @@ func (provider *Provider) SearchLogEntries(ctx context.Context, params *model.Se
 	filters := []string{}
 	args := []interface{}{}
 
-	if params.Level != "" {
-		filters = append(filters, fmt.Sprintf("level = $%d", len(args)+1))
-		args = append(args, params.Level)
+	if len(params.Levels) > 0 {
+		var placeholders []string
+		for _, level := range params.Levels {
+			level = strings.ToLower(level)
+			placeholders = append(placeholders, fmt.Sprintf("$%d", len(args)+1))
+			args = append(args, level)
+		}
+
+		filters = append(filters, fmt.Sprintf("level IN (%s)", strings.Join(placeholders, ",")))
 	}
 
 	if params.ResourceID != "" {
@@ -54,7 +62,7 @@ func (provider *Provider) SearchLogEntries(ctx context.Context, params *model.Se
 		args = append(args, params.ParentResourceID)
 	}
 
-	if len(params.Message) > 0 {
+	if params.Message != "" {
 		words := strings.Split(params.Message, " ")
 		d := strings.Join(words, " & ")
 
@@ -73,6 +81,7 @@ func (provider *Provider) SearchLogEntries(ctx context.Context, params *model.Se
 	`
 
 	fmt.Println(query)
+	fmt.Println(args)
 
 	rows, err := provider.conn.QueryContext(ctx, query, args...)
 

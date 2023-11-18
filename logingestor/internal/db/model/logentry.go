@@ -16,11 +16,11 @@ type LogEntry struct {
 }
 
 type SearchLogEntriesParams struct {
-	Level            string `json:"level"`
-	ResourceID       string `json:"resourceId"`
-	TraceID          string `json:"traceId"`
-	Commit           string `json:"commit"`
-	SpanID           string `json:"spanId"`
-	ParentResourceID string `json:"parentResourceId"`
-	Message          string `json:"message"`
+	Levels           []string `json:"levels"`
+	ResourceID       string   `json:"resourceId"`
+	TraceID          string   `json:"traceId"`
+	Commit           string   `json:"commit"`
+	SpanID           string   `json:"spanId"`
+	ParentResourceID string   `json:"parentResourceId"`
+	Message          string   `json:"message"`
 }

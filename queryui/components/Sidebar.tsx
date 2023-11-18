@@ -11,25 +11,34 @@ import { Input } from "@/components/ui/input";
 
 const levels = [
   {
-    id: "Success",
-    label: "Success",
+    id: "Info",
+    label: "info",
   },
   {
     id: "Error",
-    label: "Error",
+    label: "error",
   },
   {
-    id: "Alert",
-    label: "Alert",
+    id: "Debug",
+    label: "debug",
   },
   {
-    id: "Severe",
-    label: "Severe",
+    id: "Warn",
+    label: "warn",
+  },
+  {
+    id: "Trace",
+    label: "trace",
+  },
+  {
+    id: "Fatal",
+    label: "fatal",
   },
 ] as const;
 
 const FormSchema = z.object({
   levels: z.array(z.string()),
+  resourceid: z.string(),
   traceId: z.string(),
   spanId: z.string(),
   parentResouceId: z.string(),
@@ -42,6 +51,7 @@ export const Sidebar = () => {
     resolver: zodResolver(FormSchema),
     defaultValues: {
       levels: [],
+      resourceid: "",
       traceId: "",
       spanId: "",
       parentResouceId: "",
@@ -66,7 +76,7 @@ export const Sidebar = () => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Message</FormLabel>
-                <Input placeholder="abc-xyz-123" {...field} className="py-2 bg-white" />
+                <Input placeholder="db failed to start" {...field} className="py-2 bg-white" />
               </FormItem>
             )}
           />
@@ -105,6 +115,16 @@ export const Sidebar = () => {
                     />
                   ))}
                 </div>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="resourceid"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Resource ID</FormLabel>
+                <Input placeholder="abc-xyz-123" {...field} className="py-2 bg-white" />
               </FormItem>
             )}
           />

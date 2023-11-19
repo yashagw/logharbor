@@ -69,6 +69,14 @@ func (provider *Provider) SearchLogEntries(ctx context.Context, params *model.Se
 		filters = append(filters, fmt.Sprintf("ts @@ to_tsquery('english', '%s')", d))
 	}
 
+	if !params.To.IsZero() {
+		filters = append(filters, fmt.Sprintf("timestamp <= $%d", len(args)+1))
+		args = append(args, params.To)
+	}
+
+	filters = append(filters, fmt.Sprintf("timestamp >= $%d", len(args)+1))
+	args = append(args, params.From)
+
 	where := ""
 	if len(filters) > 0 {
 		where = "WHERE " + strings.Join(filters, " AND ")
@@ -80,8 +88,8 @@ func (provider *Provider) SearchLogEntries(ctx context.Context, params *model.Se
     ` + where + `
 	`
 
-	fmt.Println(query)
-	fmt.Println(args)
+	// fmt.Println(query)
+	// fmt.Println(args)
 
 	rows, err := provider.conn.QueryContext(ctx, query, args...)
 

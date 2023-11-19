@@ -11,9 +11,9 @@ export default function Home() {
           <h1 className="text-lg">Query Interface</h1>
         </div>
       </div>
-      <div className="flex-1 flex overflow-hidden w-full">
+      <div className="flex-1 flex overflow-hidden w-screen">
         <Sidebar />
-        <div className="flex-1 bg-secondary min-h-screen p-4">
+        <div className="flex-1 bg-secondary py-4 px-4 min-h-full overflow-auto space-y-2">
           <LogTable />
         </div>
       </div>

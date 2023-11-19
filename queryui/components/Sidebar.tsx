@@ -36,7 +36,7 @@ const levels = [
   {
     id: "debug",
     label: "Debug",
-  }
+  },
 ] as const;
 
 export const Sidebar = () => {
@@ -51,6 +51,10 @@ export const Sidebar = () => {
     console.log("submitting");
     if (loading) return;
     await getData(data);
+  }
+
+  function onClear() {
+    form.reset(defaultFilters);
   }
 
   return (
@@ -224,15 +228,18 @@ export const Sidebar = () => {
           />
         </Form>
       </div>
-      <div className="px-4 py-4">
+      <div className="px-4 py-4 flex gap-2">
         <Button
           variant="default"
-          className="w-full"
+          className="w-1/2"
           onClick={form.handleSubmit(onSubmit, (data) => {
             console.log(data);
           })}
         >
           Search
+        </Button>
+        <Button variant="outline" className="w-1/2" onClick={onClear}>
+          Clear
         </Button>
       </div>
     </div>

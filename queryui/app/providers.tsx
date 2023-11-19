@@ -15,22 +15,6 @@ export type Log = {
   resourceId: string;
 };
 
-type Data = {
-  loading: boolean;
-  error: string;
-  logs: Log[];
-  serviceDown: boolean;
-  getData: (filters: Filters) => void;
-};
-
-const defaultData: Data = {
-  loading: false,
-  serviceDown: false,
-  error: "",
-  logs: [],
-  getData: () => {},
-};
-
 export const FiltersSchema = z
   .object({
     levels: z.array(z.string()),
@@ -58,14 +42,33 @@ export const defaultFilters = {
   resourceId: "",
   commit: "",
   message: "",
-  from: new Date(new Date().setDate(new Date().getDate() - 5)),
+  from: new Date(new Date().setDate(new Date().getDate() - 7)),
   to: new Date(),
+};
+
+type Data = {
+  loading: boolean;
+  filters: Filters;
+  error: string;
+  logs: Log[];
+  serviceDown: boolean;
+  getData: (filters: Filters) => void;
+};
+
+const defaultData: Data = {
+  loading: false,
+  filters: defaultFilters,
+  serviceDown: false,
+  error: "",
+  logs: [],
+  getData: () => {},
 };
 
 export const DataContext = createContext(defaultData);
 
 export const Provider = ({ children }: { children: React.ReactNode }) => {
   const [logs, setLogs] = useState<Log[]>([]);
+  const [filters, setFilters] = useState<Filters>(defaultFilters);
   const [loading, setLoading] = useState(true);
   const [count, setCount] = useState(1);
   const [serviceDown, setServiceDown] = useState(false);
@@ -89,8 +92,6 @@ export const Provider = ({ children }: { children: React.ReactNode }) => {
       to: filters.to.toISOString(),
     };
 
-    console.log(body);
-
     try {
       const response = await fetch(url.toString(), {
         method: "POST",
@@ -106,6 +107,7 @@ export const Provider = ({ children }: { children: React.ReactNode }) => {
       }
 
       setLogs(data.logEntries);
+      setFilters(filters);
       setLoading(false);
     } catch (err) {
       console.log("error in catch is ", err);
@@ -130,5 +132,9 @@ export const Provider = ({ children }: { children: React.ReactNode }) => {
     getData(defaultFilters);
   }, []);
 
-  return <DataContext.Provider value={{ logs, loading, error, getData, serviceDown }}>{children}</DataContext.Provider>;
+  return (
+    <DataContext.Provider value={{ logs, filters, loading, error, getData, serviceDown }}>
+      {children}
+    </DataContext.Provider>
+  );
 };

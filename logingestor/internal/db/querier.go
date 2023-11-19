@@ -8,5 +8,5 @@ import (
 
 type DBQuerier interface {
 	InsertLogEntry(context context.Context, arg *model.LogEntry) error
-	SearchLogEntries(context context.Context, arg *model.SearchLogEntriesParams) ([]model.LogEntry, error)
+	SearchLogEntries(context context.Context, arg *model.SearchLogEntriesParams) ([]model.LogEntryResult, error)
 }

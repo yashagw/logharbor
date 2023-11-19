@@ -1,6 +1,7 @@
 package server
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/segmentio/kafka-go"
 	"github.com/yashagw/logingestor/internal/config"
@@ -26,9 +27,10 @@ func NewServer(config config.Config, provider db.Provider, kafkaWriter *kafka.Wr
 
 func (s *Server) setupRouter() {
 	s.router = gin.Default()
+	s.router.Use(cors.Default())
 
 	s.router.POST("/", s.InsertLogEntry)
-	s.router.GET("/", s.SearchLogEntries)
+	s.router.POST("/search", s.SearchLogEntries)
 }
 
 func (server *Server) Start(address string) error {

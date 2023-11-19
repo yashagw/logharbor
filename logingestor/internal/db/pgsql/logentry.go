@@ -20,8 +20,8 @@ func (provider *Provider) InsertLogEntry(ctx context.Context, logentry *model.Lo
 	return err
 }
 
-func (provider *Provider) SearchLogEntries(ctx context.Context, params *model.SearchLogEntriesParams) ([]model.LogEntry, error) {
-	var logentries []model.LogEntry
+func (provider *Provider) SearchLogEntries(ctx context.Context, params *model.SearchLogEntriesParams) ([]model.LogEntryResult, error) {
+	var logentries []model.LogEntryResult
 
 	filters := []string{}
 	args := []interface{}{}
@@ -90,12 +90,16 @@ func (provider *Provider) SearchLogEntries(ctx context.Context, params *model.Se
 	}
 
 	for rows.Next() {
-		var logentry model.LogEntry
-		err = rows.Scan(&logentry.Level, &logentry.Message, &logentry.ResourceID, &logentry.Timestamp, &logentry.TraceID, &logentry.SpanID, &logentry.Commit, &logentry.Metadata.ParentResourceID)
+		var logentry model.LogEntryResult
+		err = rows.Scan(&logentry.Level, &logentry.Message, &logentry.ResourceID, &logentry.Timestamp, &logentry.TraceID, &logentry.SpanID, &logentry.Commit, &logentry.ParentResourceID)
 		if err != nil {
 			return nil, err
 		}
 		logentries = append(logentries, logentry)
+	}
+
+	if len(logentries) == 0 {
+		return []model.LogEntryResult{}, nil
 	}
 
 	return logentries, nil

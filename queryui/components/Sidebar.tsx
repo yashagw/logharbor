@@ -4,69 +4,59 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { useContext } from "react";
+import { DataContext, Filters, FiltersSchema, defaultFilters } from "@/app/providers";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
 
 const levels = [
   {
-    id: "Info",
-    label: "info",
+    id: "info",
+    label: "Info",
   },
   {
-    id: "Error",
-    label: "error",
+    id: "error",
+    label: "Error",
   },
   {
-    id: "Debug",
-    label: "debug",
+    id: "warn",
+    label: "Warn",
   },
   {
-    id: "Warn",
-    label: "warn",
+    id: "trace",
+    label: "Trace",
   },
   {
-    id: "Trace",
-    label: "trace",
-  },
-  {
-    id: "Fatal",
-    label: "fatal",
-  },
+    id: "debug",
+    label: "Debug",
+  }
 ] as const;
 
-const FormSchema = z.object({
-  levels: z.array(z.string()),
-  resourceid: z.string(),
-  traceId: z.string(),
-  spanId: z.string(),
-  parentResouceId: z.string(),
-  commit: z.string(),
-  message: z.string(),
-});
-
 export const Sidebar = () => {
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
-    defaultValues: {
-      levels: [],
-      resourceid: "",
-      traceId: "",
-      spanId: "",
-      parentResouceId: "",
-      commit: "",
-      message: "",
-    },
+  const { getData, loading } = useContext(DataContext);
+
+  const form = useForm<Filters>({
+    resolver: zodResolver(FiltersSchema),
+    defaultValues: defaultFilters,
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(data);
+  async function onSubmit(data: Filters) {
+    console.log("submitting");
+    if (loading) return;
+    await getData(data);
   }
+
   return (
     <div className="w-1/5 min-w-[300px] h-full border-r bg-white flex flex-col  justify-between">
-      <div className="px-4 py-4">
-        <h1 className="text-lg font-bold text-secondary-foreground">Logizer</h1>
+      <div className="px-4 py-2">
+        <h4 className="text-md  font-bold text-secondary-foreground">Filters</h4>
       </div>
       <div className="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar border-t ">
         <Form {...form}>
@@ -76,7 +66,7 @@ export const Sidebar = () => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Message</FormLabel>
-                <Input placeholder="db failed to start" {...field} className="py-2 bg-white" />
+                <Input placeholder="abc-xyz-123" {...field} className="py-2 bg-white" />
               </FormItem>
             )}
           />
@@ -120,11 +110,65 @@ export const Sidebar = () => {
           />
           <FormField
             control={form.control}
-            name="resourceid"
+            name="from"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Resource ID</FormLabel>
-                <Input placeholder="abc-xyz-123" {...field} className="py-2 bg-white" />
+              <FormItem className="flex flex-col">
+                <FormLabel>From</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant={"outline"}
+                        className={cn("w-[240px] pl-3 text-left font-normal", !field.value && "text-muted-foreground")}
+                      >
+                        {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="to"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>To</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant={"outline"}
+                        className={cn("w-[240px] pl-3 text-left font-normal", !field.value && "text-muted-foreground")}
+                      >
+                        {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -168,10 +212,26 @@ export const Sidebar = () => {
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name="resourceId"
+            render={({ field }) => (
+              <FormItem className="py-2 px-4">
+                <FormLabel>Resource ID</FormLabel>
+                <Input placeholder="abc-xyz-123" {...field} className="py-2 bg-white" />
+              </FormItem>
+            )}
+          />
         </Form>
       </div>
       <div className="px-4 py-4">
-        <Button variant="default" className="w-full" onClick={form.handleSubmit(onSubmit)}>
+        <Button
+          variant="default"
+          className="w-full"
+          onClick={form.handleSubmit(onSubmit, (data) => {
+            console.log(data);
+          })}
+        >
           Search
         </Button>
       </div>

@@ -1,4 +1,4 @@
-# Dyte Submission by Yash Agarwal
+# LogHarbor
 
 ## About Me
 
@@ -55,29 +55,35 @@ Follow these steps to run the project:
     cd november-2023-hiring-yashagw/logingestor
     ```
 
-3. Build the Docker images:
+3. Give executable permission to .sh script
+    ```
+    chmod +x wait-for.sh
+    chmod +x start.sh
+    ```
+
+4. Build the Docker images:
     ```bash
     docker-compose build
     ```
 
-4. Start the backend services:
+5. Start the backend services:
     ```bash
     docker-compose up
     ```
 
     The backend service is now running at `http://localhost:3000`.
 
-5. In a new terminal, navigate to the `queryui` folder:
+6. In a new terminal, navigate to the `queryui` folder:
     ```bash
     cd november-2023-hiring-yashagw/queryui
     ```
 
-6. Install the necessary npm packages:
+7. Install the necessary npm packages:
     ```bash
     npm install
     ```
 
-7. Start the frontend project:
+8. Start the frontend project:
     ```bash
     npm run dev
     ```

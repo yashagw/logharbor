@@ -42,7 +42,7 @@ export const defaultFilters = {
   resourceId: "",
   commit: "",
   message: "",
-  from: new Date(new Date().setDate(new Date().getDate() - 7)),
+  from: new Date(new Date().setDate(new Date().getDate() - 365)),
   to: new Date(),
 };
 
